@@ -14,6 +14,9 @@ from random import randrange
 def check_if_new_proof_on_chain(last_proof):
     r = requests.get(url=node + "/last_proof")
     data = r.json()
+    print('***proof check****')
+    print('last proof: ' + str(last_proof))
+    print('data: ' + str(data))
     return data.get('proof') != last_proof
 
 def proof_of_work(last_proof):
@@ -27,17 +30,17 @@ def proof_of_work(last_proof):
 
     print("Searching for next proof")
     proof_counter = randrange(200) + 1
-    proof = 0 + (10000000 * (proof_counter-1))
+    proof = 0 + (1000000 * (proof_counter-1))
     startTime = datetime.datetime.now()
-    while valid_proof(last_proof, proof) is False:
+    while valid_proof(last_proof, proof) is False and valid_proof(last_proof, -proof) is False:
         proof += 1
-        if proof >= proof_counter*10000000:
+        
+        if proof >= proof_counter*1000000:
             proof_counter += 1
             didGetSolved = check_if_new_proof_on_chain(last_proof)
             currentTime = datetime.datetime.now()
             delta = math.floor(currentTime.timestamp() - startTime.timestamp())
             print("Elapsed: " + str(delta))
-            print("proof: " + str(proof))
             if didGetSolved == True:
                 print("Too slow: someone else solved")
                 return proof
@@ -45,7 +48,10 @@ def proof_of_work(last_proof):
     finalTime = math.floor(endTime.timestamp() - startTime.timestamp())
     print("Proof found: " + str(proof))
     print("Time taken: " + str(finalTime))
-    return proof
+    if valid_proof(last_proof, proof) is False:
+        return -proof
+    else:
+        return proof
 
 
 def valid_proof(last_proof, proof):
@@ -82,6 +88,7 @@ if __name__ == '__main__':
     id = f.read()
     print("ID is", id)
     f.close()
+    #'b4b7f11e8d7443c482ebbc2976e1219b'
     if len(id) == 0:
         f = open("blockchain/my_id.txt", "w")
         # Generate a globally unique ID
