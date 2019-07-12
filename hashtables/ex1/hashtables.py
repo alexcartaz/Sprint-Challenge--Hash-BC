@@ -44,9 +44,9 @@ def hash_table_insert(hash_table, key, value):
         current_pair = last_pair.next
 
     if current_pair is not None:
-        current_pair.value = value
+        current_pair.value = [current_pair.value[0], value]
     else:
-        new_pair = LinkedPair(key, value)
+        new_pair = LinkedPair(key, [value])
         new_pair.next = hash_table.storage[index]
         hash_table.storage[index] = new_pair
 
@@ -90,10 +90,8 @@ def hash_table_retrieve(hash_table, key):
             return current_pair.value
         current_pair = current_pair.next
 
+    return None
 
-# '''
-# Fill this in
-# '''
 def hash_table_resize(hash_table):
     new_hash_table = HashTable(2 * len(hash_table.storage))
 
