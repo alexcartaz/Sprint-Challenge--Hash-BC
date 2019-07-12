@@ -38,6 +38,5 @@ class TestEx2(unittest.TestCase):
 
         self.assertTrue(expected == result)
 
-
 if __name__ == '__main__':
     unittest.main()
